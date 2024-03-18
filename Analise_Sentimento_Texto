@@ -1,5 +1,40 @@
-# Análise de Sentimento de Texto sem Bibliotecas Python 
+def identificar_sentimento(frase, palavras_positivas, palavras_negativas):
 
+    palavras = frase.lower().split()
+
+    contagem_positiva = 0
+    contagem_negativa = 0
+    palavra_anterior = None
+    negacao_ativa = False
+
+    negacoes = {"não", "nunca", "jamais", "nenhum"}
+
+    for palavra in palavras:
+        if palavra_anterior in palavras_positivas and not negacao_ativa:
+            contagem_positiva += 1
+        elif palavra_anterior in palavras_negativas and palavra_anterior not in negacoes and not negacao_ativa:
+            contagem_negativa += 1
+
+        palavra_anterior = palavra
+
+        if palavra in palavras_positivas and not negacao_ativa:
+            contagem_positiva += 1
+        elif palavra in palavras_negativas and not negacao_ativa:
+            contagem_negativa += 1
+        elif palavra in negacoes:
+            negacao_ativa = True
+
+    # Ajuste para priorizar negatividade
+    contagem_negativa *= 2
+
+    if contagem_positiva > contagem_negativa or contagem_negativa == 0:
+        return "positiva"
+    elif contagem_negativa > contagem_positiva:
+        return "negativa"
+    else:
+        return "neutra"
+
+# Palavras positivas e negativas
 palavras_positivas = {
     "bom", "boa", "ótimo", "maravilhoso", "maravilhosa", "excelente", "feliz", "alegre", 
     "divertido", "criativo", "amor", "sucesso", "ótima", "divertida", "criativa"
@@ -13,36 +48,6 @@ palavras_negativas = {
     "problema", "ódio", "inimigo", "cansado", "exausto", "preocupado", "inimigo", "cansada", "exausta"
     "inseguro", "feio", "detestei", "odiei", "aborreci", "não", "chata", "insegura", "feia"
 }
-
-def identificar_sentimento(frase, palavras_positivas, palavras_negativas):
-
-    palavras = frase.lower().split()
-
-    contagem_positiva = 0
-    contagem_negativa = 0
-    palavra_anterior = None
-
-    negacoes = {"não", "nunca", "jamais", "nenhum"}
-
-    for palavra in palavras:
-        if palavra_anterior in palavras_positivas:
-            contagem_positiva += 1
-        elif palavra_anterior in palavras_negativas and palavra_anterior not in negacoes:
-            contagem_negativa += 1
-
-        palavra_anterior = palavra
-
-        if palavra in palavras_positivas:
-            contagem_positiva += 1
-        elif palavra in palavras_negativas:
-            contagem_negativa += 1
-
-    if contagem_positiva > contagem_negativa or contagem_negativa == 0:
-        return "positiva"
-    elif contagem_negativa > contagem_positiva:
-        return "negativa"
-    else:
-        return "neutra"
 
 frase = input("Insira a frase que deseja analisar:")
 
